@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "today-your-day"
+version = "0.1.0"
+description = ""
+authors = ["tfoseel <tfoseel@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "users" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+django = "^5.1.7"
+djangorestframework = "^3.16.0"
+psycopg2-binary = "^2.9.10"
+python-decouple = "^3.8"
+djangorestframework-simplejwt = "^5.5.0"
+pillow = "^11.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^4.2.0"
+ruff = "^0.11.2"
+pytest = "^8.3.5"
+pytest-django = "^4.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
