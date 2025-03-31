@@ -5,8 +5,8 @@ from .models import Recipient, RollingPaper
 class RecipientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipient
-        fields = ['id', 'name', 'birthday', 'address', 'phone_number']
-        read_only_fields = ['id']
+        fields = ['id', 'name', 'birthday', 'address', 'phone_number', 'uuid']
+        read_only_fields = ['id', 'uuid']
 
 
 class RollingPaperSerializer(serializers.ModelSerializer):

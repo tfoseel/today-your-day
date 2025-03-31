@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+    <style>
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+
+        .login-form h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #6a5acd;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .login-form button:hover {
+            background-color: #5941c6;
+        }
+
+        .info {
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .info a {
+            color: #6a5acd;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <form class="login-form" method="post" action="">
+        {% csrf_token %}
+        <h2>로그인</h2>
+        <input type="text" name="username" placeholder="전화번호 입력" required>
+        <input type="password" name="password" placeholder="비밀번호" required>
+        <button type="submit">로그인</button>
+        <div class="info">
+            회원이 아니신가요? <a href="{% url 'simple-signup' %}">회원가입</a>
+        </div>
+    </form>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("error") === "true") {
+            alert("전화번호 또는 비밀번호가 올바르지 않습니다.");
+        }
+    </script>
+</body>
+</html>

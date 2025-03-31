@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>롤링페이퍼 작성</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px; text-align: center; }
+        input, textarea, button { padding: 10px; margin: 10px; width: 300px; }
+        .readonly-name { font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>🎁 롤링페이퍼를 남겨주세요</h2>
+    <div class="readonly-name">To. {{ recipient.name }}</div>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <textarea name="message" maxlength="100" placeholder="100자 이내 메시지 작성" required></textarea><br>
+        <input type="file" name="image" accept="image/*"><br>
+        <button type="submit">롤링페이퍼 작성</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ request.user.name }}님과 이름이 같은 사람들</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: #5b67f3;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>"{{ request.user.name }}"님과 이름이 같은 사람들 🎂</h2>
+
+    {% for recipient in recipients %}
+        <div class="card">
+            <p><strong>이름:</strong> {{ recipient.name }}</p>
+            <p><strong>생일:</strong> {{ recipient.birthday }}</p>
+            <p><strong>주소:</strong> {{ recipient.address }}</p>
+            <a class="button" href="{% url 'write-rollingpaper' recipient.uuid %}">롤링페이퍼 쓰기</a>
+        </div>
+    {% empty %}
+        <p>현재 같은 이름의 대상자가 없습니다.</p>
+    {% endfor %}
+</body>
+</html>

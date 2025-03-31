@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>초대장 | {{ recipient.name }}님의 생일</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
+            padding: 16px;
+            max-width: 430px;
+            margin: 0 auto;
+        }
+
+        img.banner {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            margin-top: 24px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .highlight-blue {
+            color: #408CFF;
+            font-weight: bold;
+        }
+
+        .highlight-purple {
+            color: #9333ea;
+            font-weight: bold;
+        }
+
+        .description {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .button {
+            display: block;
+            margin: 24px auto 8px;
+            width: 100%;
+            padding: 14px;
+            background-color: #408CFF;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .sub-button {
+            display: block;
+            margin: 4px auto;
+            text-align: center;
+            color: gray;
+            font-size: 0.9rem;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 배너 이미지 -->
+    <img src="{% static 'images/invite_banner.png' %}" alt="초대 배너" class="banner">
+
+    <!-- 텍스트 -->
+    <div class="title">
+        <span class="highlight-blue">국제{{ recipient.name }}협회</span>의 일원이 되어<br>
+        <span class="highlight-purple">자립청년 {{ recipient.name }}</span>의<br>
+        쓸쓸한 생일을 빛내 주세요
+    </div>
+
+    <div class="description">
+        100자 이내의 롤링페이퍼를 써주시면<br>
+        혼자의 {{ recipient.name }} 생일 축하곡이<br>
+        노래 가사가 됩니다!
+    </div>
+
+    <!-- 버튼 -->
+    <a href="#" class="button">🎉 국제{{ recipient.name }}협회 가입하기</a>
+    <a href="#" class="sub-button">비회원으로 롤링페이퍼 쓰기</a>
+
+</body>
+</html>

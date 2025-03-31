@@ -5,18 +5,6 @@
 
 ---
 
-## 📁 프로젝트 구조
-
-```bash
-today-your-day/
-├── app/              # Django 프로젝트 루트
-│   ├── users/        # 사용자 관련 앱 (회원가입 등)
-│   ├── today/        # 프로젝트 설정
-├── docker/           # Docker 관련 설정
-├── pyproject.toml    # Poetry 의존성 관리
-├── docker-compose.yml
-```
-
 ## ⚙️ 개발 환경
 - Python 3.11
 - Django 4.x
@@ -76,3 +64,146 @@ pre-commit run --all-files
 - 롤링페이퍼 API 작성
 - 실물 초대장 및 케이크 배달 API
 - AI 기반 음악 생성 연동
+
+# 오늘은 너의 날 - API 문서 (v1)
+
+## 🔐 인증
+
+### 1. 회원가입  
+`POST /api/users/signup/`  
+사용자 계정을 생성합니다.
+
+**Request Body:**
+```json
+{
+  "name": "이승우",
+  "nickname": "테스트승우",
+  "birthday": "2000-08-06",
+  "phone_number": "01012345678",
+  "password": "strongpassword123!"
+}
+```
+
+**Response:**
+- 201 CREATED
+
+---
+
+### 2. 로그인 (JWT)
+`POST /api/users/login/`  
+JWT 토큰을 발급받습니다.
+
+**Request Body:**
+```json
+{
+  "phone_number": "01012345678",
+  "password": "strongpassword123!"
+}
+```
+
+**Response:**
+```json
+{
+  "access": "ACCESS_TOKEN",
+  "refresh": "REFRESH_TOKEN"
+}
+```
+
+---
+
+### 3. 내 정보 조회  
+`GET /api/users/me/`  
+**Header:** Authorization: Bearer {access_token}
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "이승우",
+  "nickname": "테스트승우",
+  "birthday": "2000-08-06",
+  "phone_number": "01012345678"
+}
+```
+
+---
+
+### 4. 회원탈퇴  
+`DELETE /api/users/me/`  
+**Header:** Authorization: Bearer {access_token}  
+회원 정보를 삭제합니다.
+
+**Response:**
+- 204 NO CONTENT
+
+---
+
+## 🎁 수신자 (Recipient)
+
+### 5. 수신자 생성
+`POST /api/recipients/`  
+생일 초대장을 받을 대상자를 등록합니다.
+
+**Request Body:**
+```json
+{
+  "name": "홍길동",
+  "birthday": "2001-05-03",
+  "address": "서울시 강남구 테헤란로 123",
+  "phone_number": "01012345678"
+}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "홍길동",
+  "birthday": "2001-05-03",
+  "address": "서울시 강남구 테헤란로 123",
+  "phone_number": "01012345678",
+  "uuid": "UUID값"
+}
+```
+
+---
+
+## 💌 롤링페이퍼
+
+### 6. 롤링페이퍼 작성  
+`POST /api/recipients/rollingpapers/`  
+특정 수신자에게 메시지와 이미지를 전달합니다.
+
+**Request Body:**
+multipart/form-data
+- recipient: Recipient ID
+- message: 텍스트 메시지 (최대 100자)
+- image: 선택 이미지 파일
+
+**Response:**
+- 201 CREATED
+
+---
+
+### 7. 특정 수신자의 초대 페이지 조회 (웹 랜딩)
+`GET /api/recipients/<uuid:uuid>/invite/`  
+템플릿 기반 HTML 랜딩 페이지 제공
+
+---
+
+### 8. 특정 수신자 롤링페이퍼 목록 조회  
+`GET /api/recipients/<uuid:uuid>/rollingpapers/`  
+수신자에게 전달된 롤링페이퍼를 모두 조회합니다.
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "message": "생일 축하해요 :)",
+    "image": "http://localhost:8000/media/rollingpaper_images/...",
+    "created_at": "2025-03-30T12:00:00Z"
+  },
+  ...
+]
+```

@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ recipient.name }}님의 롤링페이퍼</title>
+    <style>
+        body {
+            background-color: #fefefe;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 390px;
+            margin: auto;
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .banner {
+            width: 100%;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .rollingpaper {
+            border-top: 1px dashed #ccc;
+            padding: 1rem 0;
+        }
+
+        .rollingpaper:last-child {
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .message {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .image {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .timestamp {
+            font-size: 0.8rem;
+            color: gray;
+            margin-top: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img class="banner" src="{% static 'images/invite_banner.png' %}" alt="생일 초대 배너">
+
+        <h2>🎂 {{ recipient.name }}님에게 도착한 롤링페이퍼</h2>
+
+        {% for paper in rollingpapers %}
+            <div class="rollingpaper">
+                <div class="message">💌 {{ paper.message }}</div>
+                {% if paper.image %}
+                    <img class="image" src="{{ paper.image.url }}" alt="첨부 이미지">
+                {% endif %}
+                <div class="timestamp">{{ paper.created_at|date:"Y년 m월 d일 H:i" }}</div>
+            </div>
+        {% empty %}
+            <p>아직 받은 롤링페이퍼가 없어요 😢</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
