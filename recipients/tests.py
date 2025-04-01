@@ -1,80 +1,59 @@
-from PIL import Image
-import tempfile
-from rest_framework.test import APITestCase
-from rest_framework import status
+from django.test import TestCase
 from django.urls import reverse
 from recipients.models import Recipient, RollingPaper
 
 
-def generate_test_image():
-    image = Image.new("RGB", (100, 100), color=(255, 0, 0))
-    tmp_file = tempfile.NamedTemporaryFile(suffix=".jpg")
-    image.save(tmp_file, format="JPEG")
-    tmp_file.seek(0)
-    return tmp_file
-
-
-class RollingPaperTests(APITestCase):
+class RecipientTemplateViewsTests(TestCase):
 
     def setUp(self):
         self.recipient = Recipient.objects.create(
-            name="홍길동",
-            birthday="2001-05-03",
-            address="서울시 강남구 테헤란로 123"
+            name="길동이",
+            birthday="1999-09-09",
+            address="서울시 중구 명동 100"
         )
 
-    def test_create_rollingpaper_success(self):
-        url = reverse('rollingpaper-create')  # urls.py에 이름 설정 필요
+    def test_invite_view_renders(self):
+        url = reverse('recipient-invite', args=[self.recipient.uuid])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.recipient.name)
+
+    def test_write_rollingpaper_view_get(self):
+        url = reverse('write-rollingpaper', args=[self.recipient.uuid])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.recipient.name)
+
+    def test_write_rollingpaper_view_post_success(self):
+        url = reverse('write-rollingpaper', args=[self.recipient.uuid])
         data = {
-            "recipient": self.recipient.id,
-            "message": "생일 축하해요 :)"
+            "message": "길동이 생일 축하해!"
         }
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 302)  # 리디렉트 확인
         self.assertEqual(RollingPaper.objects.count(), 1)
-        self.assertEqual(RollingPaper.objects.first().message, "생일 축하해요 :)")
 
-    def test_create_rollingpaper_with_image(self):
-        url = reverse('rollingpaper-create')
-        image = generate_test_image()
+    def test_write_rollingpaper_over_limit(self):
+        url = reverse('write-rollingpaper', args=[self.recipient.uuid])
         data = {
-            "recipient": self.recipient.id,
-            "message": "생일 축하해!",
-            "image": image
+            "message": "x" * 101
         }
-        response = self.client.post(url, data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, 200)  # 다시 폼 렌더링
+        self.assertContains(response, "100자 이하로 작성해주세요.")
+        self.assertEqual(RollingPaper.objects.count(), 0)
 
-    def test_create_rollingpaper_over_100_chars(self):
-        url = reverse('rollingpaper-create')
-        data = {
-            "recipient": self.recipient.id,
-            "message": "a" * 101  # 101자
-        }
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_recipient_papers_display(self):
+        RollingPaper.objects.create(
+            recipient=self.recipient, message="테스트 롤링페이퍼")
+        url = reverse('recipient-rollingpapers', args=[self.recipient.uuid])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "테스트 롤링페이퍼")
 
-
-class RecipientTests(APITestCase):
-
-    def test_create_recipient_success(self):
-        url = reverse('recipient-create')
-        data = {
-            "name": "홍길동",
-            "birthday": "2001-05-03",
-            "address": "서울시 강남구 테헤란로 123",
-            "phone_number": "01012345678"
-        }
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Recipient.objects.count(), 1)
-        self.assertEqual(Recipient.objects.first().name, "홍길동")
-
-    def test_create_recipient_missing_required_fields(self):
-        url = reverse('recipient-create')
-        data = {
-            "name": "홍길동"
-            # birthday, address 빠짐
-        }
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_recipient_detail_api(self):
+        url = reverse('recipient-detail-by-uuid', args=[self.recipient.uuid])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("name", response.data)
+        self.assertEqual(response.data["name"], "길동이")

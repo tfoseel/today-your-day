@@ -25,6 +25,16 @@
             text-decoration: none;
             border-radius: 5px;
         }
+        .messages {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: #e0f7fa;
+            border: 1px solid #4dd0e1;
+            color: #007c91;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -40,5 +50,13 @@
     {% empty %}
         <p>현재 같은 이름의 대상자가 없습니다.</p>
     {% endfor %}
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 </body>
 </html>

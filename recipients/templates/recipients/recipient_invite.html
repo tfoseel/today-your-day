@@ -87,8 +87,10 @@
     </div>
 
     <!-- 버튼 -->
-    <a href="#" class="button">🎉 국제{{ recipient.name }}협회 가입하기</a>
-    <a href="#" class="sub-button">비회원으로 롤링페이퍼 쓰기</a>
+    <a href="{% url 'simple-signup'%}" class="button">🎉 국제{{ recipient.name }}협회 가입하기</a>
+    <a href="{% url 'write-rollingpaper' uuid=recipient.uuid %}" class="cta-button">
+        롤링페이퍼 작성하러 가기
+    </a>
 
 </body>
 </html>
