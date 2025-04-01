@@ -47,7 +47,7 @@ def recipient_invite_view(request, uuid):
 
 
 def write_rollingpaper_view(request, uuid):
-    """롤링페이퍼 작성 페이지 (비회원)"""
+    """롤링페이퍼 작성 페이지 (비회원 또는 로그인 사용자 모두 접근 가능)"""
     recipient = get_object_or_404(Recipient, uuid=uuid)
 
     if request.method == "POST":
@@ -65,7 +65,11 @@ def write_rollingpaper_view(request, uuid):
             message=message,
             image=image
         )
-        return redirect("recipient-invite", uuid=recipient.uuid)
+
+        if request.user.is_authenticated:
+            return redirect("home")
+        else:
+            return redirect("login")
 
     return render(request, "recipients/write_rollingpaper.html", {
         "recipient": recipient
@@ -77,7 +81,7 @@ def recipient_rollingpapers_view(request, uuid):
     recipient = get_object_or_404(Recipient, uuid=uuid)
     rollingpapers = recipient.rollingpapers.all().order_by('-created_at')
 
-    return render(request, "recipients/recipient_rollingpapers_display.html", {
+    return render(request, "recipients/rollingpapers_display.html", {
         "recipient": recipient,
         "rollingpapers": rollingpapers
     })

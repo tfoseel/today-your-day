@@ -18,7 +18,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=30)
     nickname = models.CharField(max_length=30)
     phone_number = models.CharField(max_length=20, unique=True)
     birthday = models.DateField()
@@ -29,7 +30,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "phone_number"
-    REQUIRED_FIELDS = ["name", "nickname", "birthday"]
+    REQUIRED_FIELDS = ["last_name", "first_name", "nickname", "birthday"]
 
     def __str__(self):
         return f"{self.nickname} ({self.phone_number})"

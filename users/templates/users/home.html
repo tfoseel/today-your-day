@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>국제{{ request.user.first_name }}협회</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      color: #5b67f3;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .card p {
+      margin: 0.3rem 0;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 16px;
+      background-color: #5b67f3;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .messages {
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      background-color: #e0f7fa;
+      border: 1px solid #4dd0e1;
+      color: #007c91;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .empty {
+      text-align: center;
+      font-size: 1rem;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <h1>국제{{ request.user.first_name }}협회</h1>
+  <h2>🎉 생일이 다가오는 {{ request.user.first_name }}들</h2>
+
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% for recipient in recipients %}
+    <div class="card">
+      <p><strong>이름:</strong> {{ recipient.last_name }}{{ recipient.first_name }}</p>
+      <p><strong>생일:</strong> {{ recipient.birthday }}</p>
+      <p><strong>주소:</strong> {{ recipient.address }}</p>
+      <a class="button" href="{% url 'write-rollingpaper' recipient.uuid %}">
+        롤링페이퍼 쓰기
+      </a>
+    </div>
+  {% empty %}
+    <p class="empty">현재 이름이 같은 사람이 없습니다.</p>
+  {% endfor %}
+</body>
+</html>

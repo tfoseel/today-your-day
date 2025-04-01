@@ -8,16 +8,11 @@ from django.utils.decorators import method_decorator
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import User
-from .serializers import SignupSerializer, UserDetailSerializer
+from .serializers import UserDetailSerializer
 from recipients.models import Recipient
-
-
-class SignupView(CreateAPIView):
-    serializer_class = SignupSerializer
 
 
 class UserDetailView(APIView):
@@ -32,48 +27,68 @@ class UserDetailView(APIView):
         return Response({"message": "계정이 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
 
 
-def simple_signup_view(request):
+def signup_view(request):
     if request.method == "POST":
-        name = request.POST.get("name")
+        last_name = request.POST.get("last_name")
+        first_name = request.POST.get("first_name")
         nickname = request.POST.get("nickname")
         birthday = request.POST.get("birthday")
         phone_number = request.POST.get("phone_number")
         password = request.POST.get("password")
 
-        # 필수값 확인
-        if not all([name, nickname, birthday, password]):
-            return render(request, "users/simple_signup.html", {
+        # 하이픈 제거
+        clean_phone = phone_number.replace("-", "") if phone_number else None
+
+        if not all([last_name, first_name, nickname, birthday, password]):
+            return render(request, "users/signup.html", {
                 "error": "필수 항목을 모두 입력해 주세요."
             })
 
         user = User.objects.create_user(
-            name=name,
+            last_name=last_name,
+            first_name=first_name,
             nickname=nickname,
             birthday=birthday,
-            phone_number=phone_number or None,
+            phone_number=clean_phone,
             password=password
         )
 
         login(request, user)
-
-        # ✅ 여기서 축하 메시지 등록
         messages.success(request, f"{user.nickname}님, 가입을 축하합니다!")
+        return redirect("home")
 
-        return redirect("same-name-recipients")
+    return render(request, "users/signup.html")
 
-    return render(request, "users/simple_signup.html")
+
+def login_view(request):
+    if request.method == "POST":
+        phone = request.POST.get("username")
+        password = request.POST.get("password")
+
+        # 하이픈 제거
+        clean_phone = phone.replace("-", "") if phone else ""
+
+        user = authenticate(request, username=clean_phone, password=password)
+
+        if user:
+            login(request, user)
+            return redirect("home")
+
+        return redirect("/users/login/?error=true")
+
+    return render(request, "users/login.html")
 
 
 @method_decorator(login_required, name='dispatch')
-class SameNameRecipientListView(TemplateView):
-    template_name = "users/same_name_recipients.html"
+class HomeView(TemplateView):
+    template_name = "users/home.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = date.today()
-        user_name = self.request.user.name
 
-        same_name_recipients = Recipient.objects.filter(name=user_name)
+        same_name_recipients = Recipient.objects.filter(
+            first_name=self.request.user.first_name)
         sorted_recipients = sorted(
             same_name_recipients,
             key=lambda r: (
@@ -84,17 +99,3 @@ class SameNameRecipientListView(TemplateView):
         )
         context["recipients"] = sorted_recipients[:3]
         return context
-
-
-def custom_login_view(request):
-    if request.method == "POST":
-        phone = request.POST.get("username")
-        password = request.POST.get("password")
-        user = authenticate(request, username=phone, password=password)
-
-        if user:
-            login(request, user)
-            return redirect("same-name-recipients")
-        return redirect("/api/users/login/?error=true")
-
-    return render(request, "users/login.html")

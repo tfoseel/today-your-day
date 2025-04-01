@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #408CFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>회원가입</h2>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <input type="text" name="last_name" placeholder="성 (필수)" required>
+            <input type="text" name="first_name" placeholder="이름 (필수)" required>
+            <input type="text" name="nickname" placeholder="닉네임 (지정하지 않으면 이름 그대로)">
+            <input type="text" name="phone_number" placeholder="전화번호 (예: 01012345678)" required>
+            <input type="text" name="birthday" placeholder="생일 (예: 19991231)">
+            <input type="password" name="password" placeholder="비밀번호" required>
+            <input type="password" name="password2" placeholder="비밀번호 확인" required>
+
+            <button type="submit">가입하기</button>
+        </form>
+
+        <div class="login-link">
+            이미 계정이 있으신가요? <a href="{% url 'login' %}">로그인</a>
+        </div>
+    </div>
+
+    <script>
+        function validateForm() {
+            const form = document.forms[0];
+            const phoneInput = form.phone_number;
+            const birthdayInput = form.birthday;
+            const pw = form.password.value;
+            const pw2 = form.password2.value;
+            const nicknameInput = form.nickname;
+            const nameInput = form.first_name;
+
+            // 전화번호 포맷
+            let digits = phoneInput.value.replace(/\D/g, "");
+            if (digits.length === 11) {
+                phoneInput.value = digits.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+            } else {
+                alert("전화번호 형식이 올바르지 않습니다. (예: 01012345678)");
+                return false;
+            }
+
+            // 생일 포맷
+            if (birthdayInput.value) {
+                let b = birthdayInput.value;
+                if (!/^\d{8}$/.test(b)) {
+                    alert("생일은 8자리 숫자로 입력해주세요. (예: 19991231)");
+                    return false;
+                }
+                birthdayInput.value = b.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
+            }
+
+            // 비밀번호 확인
+            if (pw !== pw2) {
+                alert("비밀번호가 일치하지 않습니다.");
+                return false;
+            }
+
+            // 닉네임 기본값 설정
+            if (!nicknameInput.value.trim()) {
+                nicknameInput.value = nameInput.value.trim();
+            }
+
+            return true;
+        }
+    </script>
+</body>
+</html>

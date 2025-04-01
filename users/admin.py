@@ -4,7 +4,7 @@ from .models import User
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "nickname",
-                    "birthday", "phone_number")
-    search_fields = ("name", "nickname", "phone_number")
+    list_display = ("id", "last_name", "first_name",
+                    "nickname", "birthday", "phone_number")
+    search_fields = ("last_name", "first_name", "nickname", "phone_number")
     readonly_fields = ()

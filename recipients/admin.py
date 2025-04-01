@@ -10,16 +10,20 @@ class RollingPaperInline(admin.TabularInline):
 
     def image_preview(self, obj):
         if obj.image:
-            return format_html('<img src="{}" width="60" height="60" style="object-fit:cover;" />', obj.image.url)
+            return format_html(
+                '<img src="{}" width="60" height="60" style="object-fit:cover;" />',
+                obj.image.url
+            )
         return "(No Image)"
     image_preview.short_description = "Image Preview"
 
 
 @admin.register(Recipient)
 class RecipientAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "birthday",
-                    "address", "phone_number", "uuid")
-    search_fields = ("name", "address", "phone_number")
+    list_display = ("id", "last_name", "first_name", "birthday",
+                    "address", "phone_number", "uuid", "music")
+    search_fields = ("first_name", "last_name",
+                     "first_name", "address", "phone_number")
     readonly_fields = ("uuid",)
     inlines = [RollingPaperInline]
 
@@ -28,7 +32,8 @@ class RecipientAdmin(admin.ModelAdmin):
 class RollingPaperAdmin(admin.ModelAdmin):
     list_display = ("id", "recipient", "message_preview",
                     "created_at", "thumbnail")
-    search_fields = ("recipient__name", "message")
+    search_fields = ("recipient__last_name",
+                     "recipient__first_name", "message")
     list_filter = ("created_at",)
 
     def message_preview(self, obj):
@@ -37,6 +42,9 @@ class RollingPaperAdmin(admin.ModelAdmin):
 
     def thumbnail(self, obj):
         if obj.image:
-            return format_html('<img src="{}" width="60" height="60" style="object-fit:cover;" />', obj.image.url)
+            return format_html(
+                '<img src="{}" width="60" height="60" style="object-fit:cover;" />',
+                obj.image.url
+            )
         return "(No Image)"
     thumbnail.short_description = "Image"

@@ -2,95 +2,104 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>초대장 | {{ recipient.name }}님의 생일</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-            background-color: #ffffff;
-            padding: 16px;
-            max-width: 430px;
-            margin: 0 auto;
-        }
+  <meta charset="UTF-8">
+  <title>초대장 | {{ recipient.last_name }}{{ recipient.first_name }}님의 생일</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background-color: #f9f9f9;
+      padding: 16px;
+      max-width: 430px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-        img.banner {
-            width: 100%;
-            border-radius: 12px;
-        }
+    img.banner {
+      width: 100%;
+      border-radius: 12px;
+    }
 
-        .title {
-            font-size: 1.2rem;
-            margin-top: 24px;
-            font-weight: 600;
-            text-align: center;
-        }
+    .title {
+      font-size: 1.3rem;
+      margin-top: 24px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.6;
+    }
 
-        .highlight-blue {
-            color: #408CFF;
-            font-weight: bold;
-        }
+    .highlight-blue {
+      color: #408CFF;
+      font-weight: bold;
+    }
 
-        .highlight-purple {
-            color: #9333ea;
-            font-weight: bold;
-        }
+    .highlight-purple {
+      color: #9333ea;
+      font-weight: bold;
+    }
 
-        .description {
-            margin-top: 12px;
-            text-align: center;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
+    .description {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #333;
+    }
 
-        .button {
-            display: block;
-            margin: 24px auto 8px;
-            width: 100%;
-            padding: 14px;
-            background-color: #408CFF;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 600;
-            text-decoration: none;
-        }
+    .button, .cta-button {
+      display: block;
+      margin: 16px auto 8px;
+      width: 100%;
+      padding: 14px;
+      background-color: #408CFF;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
 
-        .sub-button {
-            display: block;
-            margin: 4px auto;
-            text-align: center;
-            color: gray;
-            font-size: 0.9rem;
-            text-decoration: underline;
-        }
-    </style>
+    .button:hover,
+    .cta-button:hover {
+      background-color: #3273dc;
+    }
+
+    .sub-button {
+      display: block;
+      margin: 4px auto;
+      text-align: center;
+      color: gray;
+      font-size: 0.9rem;
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-    <!-- 배너 이미지 -->
-    <img src="{% static 'images/invite_banner.png' %}" alt="초대 배너" class="banner">
+  <!-- 배너 이미지 -->
+  <img src="{% static 'images/invite_banner.png' %}" alt="초대 배너" class="banner">
 
-    <!-- 텍스트 -->
-    <div class="title">
-        <span class="highlight-blue">국제{{ recipient.name }}협회</span>의 일원이 되어<br>
-        <span class="highlight-purple">자립청년 {{ recipient.name }}</span>의<br>
-        쓸쓸한 생일을 빛내 주세요
-    </div>
+  <!-- 텍스트 -->
+  <div class="title">
+    <span class="highlight-blue">국제{{ recipient.first_name }}협회</span>의 일원이 되어<br>
+    <span class="highlight-purple">자립청년 {{ recipient.first_name }}</span>의<br>
+    쓸쓸한 생일을 빛내 주세요 🎉
+  </div>
 
-    <div class="description">
-        100자 이내의 롤링페이퍼를 써주시면<br>
-        혼자의 {{ recipient.name }} 생일 축하곡이<br>
-        노래 가사가 됩니다!
-    </div>
+  <div class="description">
+    100자 이내의 롤링페이퍼를 작성해 주시면<br>
+    {{ recipient.first_name }}님 생일 축하곡의 노래 가사가 됩니다!
+  </div>
 
-    <!-- 버튼 -->
-    <a href="{% url 'simple-signup'%}" class="button">🎉 국제{{ recipient.name }}협회 가입하기</a>
-    <a href="{% url 'write-rollingpaper' uuid=recipient.uuid %}" class="cta-button">
-        롤링페이퍼 작성하러 가기
-    </a>
+  <!-- 버튼 -->
+  <a href="{% url 'signup' %}" class="button">🎈 회원가입하고 롤링페이퍼 쓰기</a>
+  <a href="{% url 'write-rollingpaper' uuid=recipient.uuid %}" class="cta-button">비회원으로 바로 작성하기</a>
 
 </body>
 </html>

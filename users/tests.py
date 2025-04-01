@@ -9,8 +9,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class UserAuthActionsTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(
-            name="승우",
-            nickname="테스트승우",
+            first_name="승우",
+            last_name="이",
+            nickname="과일가게 아저씨",
             birthday="2000-08-06",
             phone_number="01022223333",
             password="pass1234"
@@ -18,35 +19,38 @@ class UserAuthActionsTestCase(APITestCase):
         self.refresh = RefreshToken.for_user(self.user)
         self.access_token = str(self.refresh.access_token)
         self.auth_header = {
-            "HTTP_AUTHORIZATION": f"Bearer {self.access_token}"}
+            "HTTP_AUTHORIZATION": f"Bearer {self.access_token}"
+        }
 
     def test_get_user_profile(self):
-        url = reverse("me")  # /users/me/
+        url = reverse("me")
         response = self.client.get(url, **self.auth_header)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["name"], "승우")
+        self.assertEqual(response.data["first_name"], "승우")
+        self.assertEqual(response.data["last_name"], "이")
+        self.assertEqual(response.data["nickname"], "과일가게 아저씨")
         self.assertEqual(response.data["phone_number"], "01022223333")
 
     def test_delete_user_account(self):
-        url = reverse("me")  # /users/me/
+        url = reverse("me")
         response = self.client.delete(url, **self.auth_header)
         self.assertEqual(response.status_code, 204)
         self.assertFalse(User.objects.filter(
             phone_number="01022223333").exists())
 
     def test_logout(self):
-        url = reverse("logout")  # /users/logout/
+        url = reverse("logout")
         data = {"refresh": str(self.refresh)}
         response = self.client.post(url, data, **self.auth_header)
         self.assertEqual(response.status_code, 200)
 
 
 class TemplateLoginTests(TestCase):
-
     def setUp(self):
         self.user = User.objects.create_user(
-            name="승우",
-            nickname="로그인승우",
+            first_name="승우",
+            last_name="이",
+            nickname="과일가게 아저씨",
             birthday="1995-12-12",
             phone_number="01099998888",
             password="webpass123"
@@ -63,8 +67,7 @@ class TemplateLoginTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_recommendation_page_access(self):
-        # 먼저 로그인
         self.client.login(username="01099998888", password="webpass123")
         response = self.client.get(reverse("same-name-recipients"))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "승우")  # 이름이 포함되어 있는지 확인
+        self.assertContains(response, "승우")

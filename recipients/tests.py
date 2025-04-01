@@ -7,7 +7,8 @@ class RecipientTemplateViewsTests(TestCase):
 
     def setUp(self):
         self.recipient = Recipient.objects.create(
-            name="길동이",
+            last_name="홍",
+            first_name="길동",
             birthday="1999-09-09",
             address="서울시 중구 명동 100"
         )
@@ -27,7 +28,7 @@ class RecipientTemplateViewsTests(TestCase):
     def test_write_rollingpaper_view_post_success(self):
         url = reverse('write-rollingpaper', args=[self.recipient.uuid])
         data = {
-            "message": "길동이 생일 축하해!"
+            "message": "길동 생일 축하해!"
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 302)  # 리디렉트 확인
@@ -55,5 +56,5 @@ class RecipientTemplateViewsTests(TestCase):
         url = reverse('recipient-detail-by-uuid', args=[self.recipient.uuid])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("name", response.data)
-        self.assertEqual(response.data["name"], "길동이")
+        self.assertIn("first_name", response.data)
+        self.assertEqual(response.data["first_name"], "길동")

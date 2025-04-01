@@ -6,8 +6,11 @@ from .models import User
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["name", "nickname", "phone_number", "birthday", "password"]
-        extra_kwargs = {"password": {"write_only": True}}
+        fields = ["last_name", "first_name", "nickname",
+                  "phone_number", "birthday", "password"]
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -23,4 +26,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["name", "nickname", "phone_number", "birthday"]
+        fields = ["last_name", "first_name",
+                  "nickname", "phone_number", "birthday"]
