@@ -16,6 +16,8 @@ psycopg2-binary = "^2.9.10"
 python-decouple = "^3.8"
 djangorestframework-simplejwt = "^5.5.0"
 pillow = "^11.1.0"
+gunicorn = "^23.0.0"
+whitenoise = "^6.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -27,3 +29,6 @@ pytest-django = "^4.10.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+ignore = ["F403", "F405"]
