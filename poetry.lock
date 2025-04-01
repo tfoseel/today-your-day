@@ -48,6 +48,21 @@ files = [
 ]
 
 [[package]]
+name = "dj-database-url"
+version = "2.3.0"
+description = "Use Database URLs in your Django Application."
+optional = false
+python-versions = "*"
+files = [
+    {file = "dj_database_url-2.3.0-py3-none-any.whl", hash = "sha256:bb0d414ba0ac5cd62773ec7f86f8cc378a9dbb00a80884c2fc08cc570452521e"},
+    {file = "dj_database_url-2.3.0.tar.gz", hash = "sha256:ae52e8e634186b57e5a45e445da5dc407a819c2ceed8a53d1fac004cc5288787"},
+]
+
+[package.dependencies]
+Django = ">=4.2"
+typing_extensions = ">=3.10.0.0"
+
+[[package]]
 name = "django"
 version = "5.1.7"
 description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
@@ -574,6 +589,17 @@ dev = ["build", "hatch"]
 doc = ["sphinx"]
 
 [[package]]
+name = "typing-extensions"
+version = "4.13.0"
+description = "Backported and Experimental Type Hints for Python 3.8+"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "typing_extensions-4.13.0-py3-none-any.whl", hash = "sha256:c8dd92cc0d6425a97c18fbb9d1954e5ff92c1ca881a309c45f06ebc0b79058e5"},
+    {file = "typing_extensions-4.13.0.tar.gz", hash = "sha256:0a4ac55a5820789d87e297727d229866c9650f6521b64206413c4fbada24d95b"},
+]
+
+[[package]]
 name = "tzdata"
 version = "2025.2"
 description = "Provider of IANA time zone data"
@@ -621,4 +647,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "aeb4356b5346d33751837b149efb43a5e056528ffc7a29e770879d347c54b82a"
+content-hash = "f52a577b3e4d1e071ba6a45184ca0e1cfc17b09c077168f6738393729a4b906b"
