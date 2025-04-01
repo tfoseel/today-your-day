@@ -3,8 +3,10 @@ services:
     name: today-your-day
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:10000"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
+      - key: DJANGO_SECRET_KEY
+        value: your-production-secret-key
       - key: DEBUG
         value: "False"
       - key: RENDER_EXTERNAL_HOSTNAME
