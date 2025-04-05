@@ -4,7 +4,7 @@ import os
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
 
 DATABASES = {
     'default': dj_database_url.config(conn_max_age=600)
