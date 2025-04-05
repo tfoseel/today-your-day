@@ -2,97 +2,178 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>국제{{ request.user.first_name }}협회</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <title>국제 {{ request.user.first_name }} 협회</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/gh/webfontworld/pretendard/Pretendard.css" rel="stylesheet" />
+
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
       font-family: 'Pretendard', sans-serif;
-      background-color: #f9f9f9;
-      padding: 20px;
-      max-width: 500px;
-      margin: 0 auto;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
-      color: #5b67f3;
+    body {
+      background-image: url("{% static 'images/home_background.png' %}");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    h2 {
+    .header {
+      width: 100%;
       text-align: center;
+      padding: 1.4rem 1rem 1rem;
+      background-color: rgba(255, 255, 255, 0.75);
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
       font-size: 1.2rem;
-      margin-bottom: 2rem;
-      color: #333;
+      margin: 0.2rem 0;
+      font-weight: 700;
     }
 
-    .card {
-      background-color: white;
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .card p {
+    .header p {
+      font-size: 0.95rem;
+      color: #444;
       margin: 0.3rem 0;
     }
 
-    .button {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 16px;
-      background-color: #5b67f3;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
+    .characters {
+      flex-grow: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 1.2rem 1rem;
+    }
+
+    .character {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: floatUp 1s ease forwards;
+      touch-action: none;
+      transition: transform 0.1s ease;
+    }
+
+    .character:active {
+      transform: scale(1.05);
+    }
+
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-bubble {
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .info-bubble a {
+      font-size: 1.1rem;
       text-decoration: none;
+      transition: transform 0.1s;
     }
 
-    .messages {
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      background-color: #e0f7fa;
-      border: 1px solid #4dd0e1;
-      color: #007c91;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: bold;
+    .info-bubble a:active {
+      transform: scale(1.2);
     }
 
-    .empty {
-      text-align: center;
-      font-size: 1rem;
-      color: #999;
+    .avatar {
+      width: 140px;
+      height: 140px;
+      transition: transform 0.3s ease;
+      touch-action: none;
+      user-select: none;
+    }
+
+    @media screen and (max-width: 420px) {
+      .avatar {
+        width: 110px;
+        height: 110px;
+      }
+      .info-bubble {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+      }
+      .header h1 {
+        font-size: 1.1rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>국제{{ request.user.first_name }}협회</h1>
-  <h2>🎉 생일이 다가오는 {{ request.user.first_name }}들</h2>
 
-  {% if messages %}
-  <div class="messages">
-    {% for message in messages %}
-      <div class="alert alert-success">{{ message }}</div>
+  <div class="header">
+    <h1>🎉 국제<span style="color: #9333ea;">{{ request.user.first_name }}</span>협회에 와주셔서 고마워요!</h1>
+    <p>{{ recipients|length }}명의 {{ request.user.first_name }}들의 생일을 축하해주세요 🎂</p>
+  </div>
+
+  <div class="characters">
+    {% for recipient in recipients|slice:":5" %}
+      {% with avatar_number=forloop.counter|stringformat:"d" %}
+        {% with avatar_path="images/avatar_"|add:avatar_number|add:".gif" %}
+          <div class="character" draggable="true" ontouchstart="">
+            <div class="info-bubble">
+              <a href="{% url 'write-rollingpaper' uuid=recipient.uuid %}">✍</a>
+              {{ recipient.birthday|date:"m월 d일" }}
+            </div>
+            <img src="{% static avatar_path %}" alt="아바타" class="avatar">
+          </div>
+        {% endwith %}
+      {% endwith %}
     {% endfor %}
   </div>
-  {% endif %}
+   
 
-  {% for recipient in recipients %}
-    <div class="card">
-      <p><strong>이름:</strong> {{ recipient.last_name }}{{ recipient.first_name }}</p>
-      <p><strong>생일:</strong> {{ recipient.birthday }}</p>
-      <p><strong>주소:</strong> {{ recipient.address }}</p>
-      <a class="button" href="{% url 'write-rollingpaper' recipient.uuid %}">
-        롤링페이퍼 쓰기
-      </a>
-    </div>
-  {% empty %}
-    <p class="empty">현재 이름이 같은 사람이 없습니다.</p>
-  {% endfor %}
+  <script>
+    const characters = document.querySelectorAll('.character');
+
+    characters.forEach(char => {
+      let isDragging = false;
+      let offsetX = 0, offsetY = 0;
+
+      char.addEventListener('touchstart', e => {
+        isDragging = true;
+        offsetX = e.touches[0].clientX - char.getBoundingClientRect().left;
+        offsetY = e.touches[0].clientY - char.getBoundingClientRect().top;
+        char.style.zIndex = 10;
+      });
+
+      char.addEventListener('touchmove', e => {
+        if (!isDragging) return;
+        const touch = e.touches[0];
+        char.style.position = 'absolute';
+        char.style.left = (touch.clientX - offsetX) + 'px';
+        char.style.top = (touch.clientY - offsetY) + 'px';
+      });
+
+      char.addEventListener('touchend', () => {
+        isDragging = false;
+        char.style.zIndex = 1;
+      });
+    });
+  </script>
+
 </body>
 </html>

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -11,6 +12,10 @@
         }
 
         body {
+            background-image: url("{% static 'images/home_background.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             font-family: 'Pretendard', sans-serif;
             background-color: #f9f9f9;
             display: flex;

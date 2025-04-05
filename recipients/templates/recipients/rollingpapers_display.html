@@ -2,127 +2,233 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>{{ recipient.last_name }}{{ recipient.first_name }}님의 롤링페이퍼</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            background-color: #fefefe;
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8">
+  <title>{{ recipient.first_name }}님의 롤링페이퍼</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        .container {
-            max-width: 430px;
-            margin: auto;
-            background: #fff;
-            padding: 1rem;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
 
-        .banner {
-            width: 100%;
-            margin-bottom: 1rem;
-            border-radius: 12px;
-        }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        .music-notice {
-            background-color: #fef3c7;
-            border: 1px solid #fcd34d;
-            padding: 12px;
-            margin-bottom: 1rem;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background: url("{% static 'images/home_background.png' %}") no-repeat center center/cover;
+      position: relative;
+      min-height: 100vh;
+      overflow-y: scroll;
+    }
 
-        audio {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      margin: 0px -20px;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      background: url("{% static 'images/confetti.gif' %}") repeat;
+      opacity: 0.3;
+      pointer-events: none;
+    }
 
-        h2 {
-            text-align: center;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
+    .container {
+      position: relative;
+      z-index: 2;
+      max-width: 460px;
+      margin: 60px auto 30px;
+      padding: 20px 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
 
-        .rollingpaper {
-            border-top: 1px dashed #ccc;
-            padding: 1rem 0;
-        }
+    .garland-wrapper {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-        .rollingpaper:last-child {
-            border-bottom: 1px dashed #ccc;
-        }
+    .garland-wrapper img {
+      max-width: 100%;
+      height: auto;
+    }
 
-        .message {
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-        }
+    h2 {
+      text-align: center;
+      font-size: 1.4rem;
+      margin:30px 0px;
+    }
 
-        .image {
-            max-width: 100%;
-            border-radius: 8px;
-        }
+    h2 span {
+      color: #7c3aed;
+    }
 
-        .timestamp {
-            font-size: 0.8rem;
-            color: gray;
-            margin-top: 0.3rem;
-        }
+    .description {
+      text-align: center;
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 12px;
+      line-height: 1.6;
+    }
 
-        .button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            margin-top: 20px;
-            background-color: #408CFF;
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-    </style>
+    .audio-tip {
+      font-size: 0.95rem;
+      color: #555;
+      font-style: italic;
+      text-align: center;
+      margin: 16px 0;
+      cursor: pointer;
+    }
+
+    .button {
+      display: block;
+      width: 90%;
+      max-width: 320px;
+      margin: 16px auto;
+      padding: 14px;
+      border: none;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .download-btn {
+      background-color: #ec4899;
+      color: white;
+    }
+
+    .toggle-btn {
+      background-color: #6366f1;
+      color: white;
+    }
+
+    .rollingpapers {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .paper {
+      background: #f9f9f9;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .paper img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .timestamp {
+      font-size: 0.8rem;
+      color: gray;
+      margin-top: 6px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 배너 이미지 -->
-        <img class="banner" src="{% static 'images/invite_banner.png' %}" alt="생일 초대 배너">
+  <div class="confetti"></div>
 
-        <!-- 음악 안내 및 플레이어 -->
-        {% if recipient.music %}
-            <div class="music-notice">
-                🎧 음악이 자동 재생됩니다. 이어폰을 착용하거나 볼륨을 조절해 주세요!
-            </div>
-            <audio controls autoplay>
-                <source src="{{ recipient.music.url }}" type="audio/mpeg">
-                이 브라우저는 오디오를 지원하지 않습니다.
-            </audio>
-        {% endif %}
-
-        <!-- 제목 -->
-        <h2>🎂 {{ recipient.last_name }}{{ recipient.first_name }}님에게 도착한 롤링페이퍼</h2>
-
-        <!-- 롤링페이퍼 목록 -->
-        {% for paper in rollingpapers %}
-            <div class="rollingpaper">
-                <div class="message">💌 {{ paper.message }}</div>
-                {% if paper.image %}
-                    <img class="image" src="{{ paper.image.url }}" alt="첨부 이미지">
-                {% endif %}
-                <div class="timestamp">{{ paper.created_at|date:"Y년 m월 d일 H:i" }}</div>
-            </div>
-        {% empty %}
-            <p>아직 받은 롤링페이퍼가 없어요 😢</p>
-        {% endfor %}
-
-        <!-- 가입 유도 버튼 -->
-        <a href="{% url 'signup' %}" class="button">
-            🎉 국제{{ recipient.first_name }}협회 가입하기
-        </a>
+  <div class="container">
+    <div class="garland-wrapper">
+      <img src="{% static 'images/garland.png' %}" alt="가랜드">
     </div>
+
+    <h2>🍰 <span>{{ recipient.first_name }}</span>님의 생일을 축하해요!</h2>
+
+    <div class="description">
+        전국의 <strong>{{ recipient.first_name }}</strong>님들이 생일 파티를 준비했어요 🎉
+      </div>
+  
+      <div class="audio-tip" onclick="playAudio()">
+        🎵 이 메시지를 클릭하면 음악이 나와요!<br>
+        볼륨을 높이거나 이어폰을 착용해주세요 :)
+      </div>
+  
+      {% if recipient.music %}
+        <audio id="bg-music">
+          <source src="{{ recipient.music.url }}" type="audio/mp3">
+          브라우저가 오디오를 지원하지 않아요.
+        </audio>
+      {% endif %}
+  
+      <div class="description">
+        지금 나오는 노래의 가사는<br>
+        전국 각지의 {{ recipient.first_name }}님들이 직접 작성했어요 💌
+      </div>
+  
+      <a href="{{ recipient.music.url }}" class="button download-btn" download>
+        ❤️ 축하 노래 다운로드
+      </a>
+  
+      <button class="button toggle-btn" onclick="toggleRollingpapers()">
+        📬 롤링페이퍼 보기
+      </button>
+  
+      <div id="rollingpapers" class="rollingpapers">
+        {% for paper in rollingpapers %}
+          <div class="paper">
+            <div>{{ paper.message }}</div>
+            {% if paper.image %}
+              <img src="{{ paper.image.url }}" alt="첨부 이미지">
+            {% endif %}
+            <div class="timestamp">{{ paper.created_at|date:"Y년 m월 d일 H:i" }}</div>
+          </div>
+        {% empty %}
+          <p style="text-align:center; color:gray;">아직 롤링페이퍼가 없어요 😢</p>
+        {% endfor %}
+      </div>
+  
+
+    <h2><span>🌍 국제{{ recipient.first_name }}협회</span>에 초대해요</h2>
+
+    <div class="description">
+      <h4>💸 회비: 없습니다</h4>
+      <h4>📍 해야 할 일: 없습니다</h4>
+    </div>
+
+    <div class="description" style="margin-top: 14px;">
+      당신은 그저, 태어난 날을 맞이한<br>
+      <strong>당신 자신</strong>을 받아들이기만 하면 돼요!
+    </div>
+
+    <a href="{% url 'signup' %}" class="button toggle-btn" style="background-color: #4f46e5; margin-top: 10px;">
+        👪 다른 {{ recipient.first_name }}들 만나보기
+      </a>
+  </div>
+
+  <script>
+    function toggleRollingpapers() {
+      const section = document.getElementById('rollingpapers');
+      section.style.display = section.style.display === 'block' ? 'none' : 'block';
+      if (section.style.display === 'block') {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function playAudio() {
+      const audio = document.getElementById("bg-music");
+      if (audio) {
+        audio.play().catch(() => {
+          alert("브라우저에서 자동 재생이 차단되었어요 😢 클릭으로 재생해주세요.");
+        });
+      }
+    }
+  </script>
 </body>
 </html>
