@@ -21,8 +21,8 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'users.User'
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",  # ← 반드시 첫 번째
-    "whitenoise.middleware.WhiteNoiseMiddleware",     # ← 두 번째
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
