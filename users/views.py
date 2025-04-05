@@ -74,7 +74,10 @@ def login_view(request):
             login(request, user)
             return redirect("home")
 
-        return redirect("/users/login/?error=true")
+        # ⛔ 로그인 실패 시 에러 메시지 포함
+        return render(request, "users/login.html", {
+            "error": "전화번호 또는 비밀번호가 올바르지 않습니다."
+        })
 
     return render(request, "users/login.html")
 
