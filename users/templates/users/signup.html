@@ -119,7 +119,7 @@
 
             // 생일 포맷
             if (birthdayInput.value) {
-                let b = birthdayInput.value;
+                let b = birthdayInput.value.replace(/\D/g, "");;
                 if (!/^\d{8}$/.test(b)) {
                     alert("생일은 8자리 숫자로 입력해주세요. (예: 19991231)");
                     return false;
